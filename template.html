@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>%%TITLE%%</title>
+<meta name="theme-color" content="#2b0f20">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla:ital@0;1&family=Hind+Siliguri:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--wine:#2b0f20;--wine2:#4a1631;--rose:#e04a76;--rose-d:#b82d58;--paper:#fff0ee;--ink:#3b1226;--soft:#8a5a6c;--line:#f2c9d3}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font-family:"Hind Siliguri",system-ui,sans-serif;color:var(--ink);min-height:100vh;
+ background:radial-gradient(120% 60% at 50% 0,var(--wine2),var(--wine) 70%) fixed;
+ padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+header{text-align:center;padding:64px 20px 36px;color:#ffe3e9}
+header h1{font-family:"Tiro Bangla",serif;font-weight:400;font-size:clamp(2.4rem,9vw,4.2rem);line-height:1.15;
+ letter-spacing:.01em;animation:rise 1.2s ease both}
+header p{margin-top:12px;color:#e9a9bb;font-size:1.05rem}
+.heart{display:inline-block;color:var(--rose);animation:beat 1.6s ease-in-out infinite}
+main{max-width:620px;margin:0 auto;padding:0 16px 64px;display:grid;gap:22px}
+.card{position:relative;background:var(--paper);border-radius:6px 22px 6px 22px;padding:34px 26px 18px 30px;
+ box-shadow:0 18px 40px -18px #000a;border-left:5px solid var(--rose);
+ background-image:repeating-linear-gradient(transparent 0 2.05rem,var(--line) 2.05rem calc(2.05rem + 1px));
+ background-position:0 2.2rem}
+.no{position:absolute;top:-12px;right:18px;background:var(--rose);color:#fff;font-size:.85rem;
+ padding:2px 12px;border-radius:99px;box-shadow:0 4px 10px -4px #0007}
+.poem{font-family:"Tiro Bangla",serif;font-size:clamp(1.2rem,4.6vw,1.45rem);line-height:2.05rem;color:var(--ink)}
+.poem span{display:block}
+.acts{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+.btn{font:inherit;font-size:.95rem;font-weight:500;cursor:pointer;border-radius:99px;padding:9px 18px;
+ border:1.5px solid var(--rose);background:transparent;color:var(--rose-d);transition:background .2s,color .2s}
+.btn:hover{background:#ffd9e1}
+.btn.share{background:var(--rose);color:#fff}
+.btn.share:hover{background:var(--rose-d)}
+.btn:focus-visible{outline:3px solid var(--wine);outline-offset:2px}
+.btn.done{background:#1f7a4d;border-color:#1f7a4d;color:#fff}
+footer{text-align:center;color:#c98aa0;padding:0 20px 40px;font-size:.9rem}
+.petal{position:fixed;top:-8vh;pointer-events:none;color:var(--rose);opacity:.5;animation:fall linear infinite;z-index:0}
+header,main,footer{position:relative;z-index:1}
+@keyframes fall{to{transform:translateY(115vh) rotate(360deg)}}
+@keyframes beat{50%{transform:scale(1.18)}}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}.petal{display:none}}
+@media(max-width:420px){.card{padding:32px 18px 16px 22px}.btn{flex:1;text-align:center}}
+</style>
+</head>
+<body>
+<header>
+  <h1>%%TITLE%% <span class="heart">♥</span></h1>
+  <p>%%COUNT%% টি কবিতা, শুধু তোমার জন্য</p>
+</header>
+<main>
+%%CARDS%%
+</main>
+<footer>ভালোবাসা দিয়ে লেখা <span class="heart">♥</span></footer>
+<script>
+const WA="%%WA%%";
+function flash(b,t){const o=b.textContent;b.textContent=t;b.classList.add("done");
+ setTimeout(()=>{b.textContent=o;b.classList.remove("done")},1600)}
+function poemText(card){return [...card.querySelectorAll(".poem span")].map(s=>s.textContent).join("\n")}
+document.addEventListener("click",async e=>{
+ const b=e.target.closest(".btn");if(!b)return;
+ const card=b.closest(".card"),text=poemText(card);
+ if(b.classList.contains("copy")){
+  try{await navigator.clipboard.writeText(text)}
+  catch{const t=document.createElement("textarea");t.value=text;document.body.appendChild(t);t.select();
+   document.execCommand("copy");t.remove()}
+  flash(b,"কপি হয়েছে ✓");
+ }else{
+  const msg=text+"\n\n♥ "+location.href.split("#")[0]+"#"+card.id;
+  window.open("https://wa.me/"+WA+"?text="+encodeURIComponent(msg),"_blank","noopener");
+ }
+});
+// ঝরা গোলাপ-পাপড়ি
+if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
+ for(let i=0;i<14;i++){const p=document.createElement("span");p.className="petal";p.textContent=i%3?"❀":"♥";
+  p.style.left=Math.random()*100+"vw";p.style.fontSize=10+Math.random()*14+"px";
+  p.style.animationDuration=12+Math.random()*14+"s";p.style.animationDelay=-Math.random()*20+"s";
+  document.body.appendChild(p)}
+}
+</script>
+</body>
+</html>
