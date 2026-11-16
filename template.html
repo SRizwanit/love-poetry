@@ -20,7 +20,7 @@ header h1{font-family:"Tiro Bangla",serif;font-weight:400;font-size:clamp(2.4rem
  letter-spacing:.01em;animation:rise 1.2s ease both}
 header p{margin-top:12px;color:#e9a9bb;font-size:1.05rem}
 .heart{display:inline-block;color:var(--rose);animation:beat 1.6s ease-in-out infinite}
-main{max-width:620px;margin:0 auto;padding:0 16px 64px;display:grid;gap:22px}
+main{max-width:620px;margin:0 auto;padding:0 16px 110px;display:grid;gap:22px}
 .card{position:relative;background:var(--paper);border-radius:6px 22px 6px 22px;padding:34px 26px 18px 30px;
  box-shadow:0 18px 40px -18px #000a;border-left:5px solid var(--rose);
  background-image:repeating-linear-gradient(transparent 0 2.05rem,var(--line) 2.05rem calc(2.05rem + 1px));
@@ -40,6 +40,16 @@ main{max-width:620px;margin:0 auto;padding:0 16px 64px;display:grid;gap:22px}
 footer{text-align:center;color:#c98aa0;padding:0 20px 40px;font-size:.9rem}
 .petal{position:fixed;top:-8vh;pointer-events:none;color:var(--rose);opacity:.5;animation:fall linear infinite;z-index:0}
 header,main,footer{position:relative;z-index:1}
+.pick{position:absolute;top:-12px;left:18px;display:flex;align-items:center;gap:6px;background:#fff;color:var(--rose-d);
+ font-size:.82rem;padding:2px 12px 2px 8px;border-radius:99px;cursor:pointer;box-shadow:0 4px 10px -4px #0007;user-select:none}
+.pick input{width:17px;height:17px;accent-color:var(--rose);cursor:pointer;margin:0}
+.card.sel{outline:3px solid var(--rose);outline-offset:3px}
+.bar{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translate(-50%,160%);z-index:5;
+ display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;width:max-content;max-width:calc(100vw - 24px);
+ background:var(--paper);padding:10px 14px;border-radius:22px;box-shadow:0 14px 40px -10px #000c;transition:transform .25s}
+.bar.on{transform:translate(-50%,0)}
+.bar .n{font-weight:600;color:var(--ink)}
+.bar .btn{padding:7px 14px;font-size:.9rem}
 @keyframes fall{to{transform:translateY(115vh) rotate(360deg)}}
 @keyframes beat{50%{transform:scale(1.18)}}
 @keyframes rise{from{opacity:0;transform:translateY(14px)}}
@@ -55,23 +65,66 @@ header,main,footer{position:relative;z-index:1}
 <main>
 %%CARDS%%
 </main>
+<div class="bar" id="bar" role="region" aria-label="নির্বাচিত কবিতা">
+  <span class="n"><span id="cnt">০</span> টি নির্বাচিত</span>
+  <button class="btn share" type="button" id="goAll">হোয়াটসঅ্যাপে শেয়ার</button>
+  <button class="btn" type="button" id="selAll">সব নির্বাচন</button>
+  <button class="btn" type="button" id="clr">বাতিল</button>
+</div>
 <footer>ভালোবাসা দিয়ে লেখা <span class="heart">♥</span></footer>
 <script>
 const WA="%%WA%%";
+const BN="০১২৩৪৫৬৭৮৯",bn=n=>String(n).replace(/\d/g,d=>BN[d]);
+const $=(q,r=document)=>r.querySelector(q),$$=(q,r=document)=>[...r.querySelectorAll(q)];
+const bar=$("#bar"),cnt=$("#cnt");
+let pending=[];                       // পপআপ ব্লক হলে বাকি কবিতা এখানে থাকে
+
 function flash(b,t){const o=b.textContent;b.textContent=t;b.classList.add("done");
  setTimeout(()=>{b.textContent=o;b.classList.remove("done")},1600)}
-function poemText(card){return [...card.querySelectorAll(".poem span")].map(s=>s.textContent).join("\n")}
+const poemText=c=>$$(".poem span",c).map(s=>s.textContent).join("\n");
+const waUrl=t=>"https://wa.me/"+WA+"?text="+encodeURIComponent(t);   // শুধু কবিতা, কোনো লিংক নেই
+
+// প্রতিটি কার্ডে নির্বাচনের চেকবক্স
+$$(".card").forEach(c=>{
+ const l=document.createElement("label");l.className="pick";
+ l.innerHTML='<input type="checkbox" aria-label="নির্বাচন করুন"> নির্বাচন';
+ c.appendChild(l);
+});
+const picked=()=>$$(".card.sel");
+function refresh(){
+ const n=picked().length+pending.length;
+ cnt.textContent=bn(n);
+ bar.classList.toggle("on",n>0);
+ $("#goAll").textContent=pending.length?"বাকি "+bn(pending.length)+" টি খুলুন":"হোয়াটসঅ্যাপে শেয়ার";
+}
+function openMany(texts){
+ const left=[];
+ texts.forEach(t=>{const w=window.open(waUrl(t),"_blank","noopener");if(!w)left.push(t)});
+ pending=left;
+ if(!left.length)$$(".card.sel").forEach(c=>{c.classList.remove("sel");$("input",c).checked=false});
+ refresh();
+ if(left.length)alert("ব্রাউজার কিছু ট্যাব আটকে দিয়েছে। এই সাইটের জন্য পপআপ অনুমতি দিন, তারপর “বাকি টি খুলুন” চাপুন।");
+}
+
+document.addEventListener("change",e=>{
+ const i=e.target.closest(".pick input");if(!i)return;
+ i.closest(".card").classList.toggle("sel",i.checked);refresh();
+});
 document.addEventListener("click",async e=>{
  const b=e.target.closest(".btn");if(!b)return;
- const card=b.closest(".card"),text=poemText(card);
+ if(b.id==="goAll"){
+  openMany(pending.length?pending:picked().map(poemText));return}
+ if(b.id==="selAll"){$$(".card").forEach(c=>{c.classList.add("sel");$("input",c).checked=true});refresh();return}
+ if(b.id==="clr"){pending=[];$$(".card").forEach(c=>{c.classList.remove("sel");$("input",c).checked=false});refresh();return}
+ const card=b.closest(".card");if(!card)return;
+ const text=poemText(card);
  if(b.classList.contains("copy")){
   try{await navigator.clipboard.writeText(text)}
   catch{const t=document.createElement("textarea");t.value=text;document.body.appendChild(t);t.select();
    document.execCommand("copy");t.remove()}
   flash(b,"কপি হয়েছে ✓");
  }else{
-  const msg=text+"\n\n♥ "+location.href.split("#")[0]+"#"+card.id;
-  window.open("https://wa.me/"+WA+"?text="+encodeURIComponent(msg),"_blank","noopener");
+  window.open(waUrl(text),"_blank","noopener");
  }
 });
 // ঝরা গোলাপ-পাপড়ি
