@@ -3,6 +3,10 @@ name: Auto Unzip & Push
 # দুইভাবে চলবে:
 # ১) রিপোতে .zip push করলে (ছোট জিপের জন্য)
 # ২) Actions ট্যাব থেকে হাতে চালিয়ে direct download লিংক দিলে (বড় জিপের জন্য)
+#
+# .github/workflows/ সহ extract করতে হলে Settings → Secrets → Actions এ
+# WORKFLOW_PAT নামে একটি Personal Access Token রাখতে হবে
+# (classic: repo + workflow scope / fine-grained: Contents + Workflows → Read and write)
 on:
   push:
     branches: [main, master]
@@ -34,9 +38,9 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  # true করলে: জিপের ভেতরে একটাই root ফোল্ডার থাকলে সেটা বাদ দিয়ে ভেতরের জিনিস extract হবে
+  # true করলে: জিপে একটাই root ফোল্ডার থাকলে সেটা বাদ দিয়ে ভেতরের জিনিস extract হবে
   STRIP_SINGLE_ROOT: ${{ github.event_name == 'workflow_dispatch' && inputs.strip_single_root || 'false' }}
-  # true করলে: extract শেষে রিপোর মূল .zip ফাইল মুছে যাবে (URL থেকে নামানো জিপ সবসময় temp-এ থাকে, রিপোতে ঢোকে না)
+  # true করলে: extract শেষে রিপোর মূল .zip ফাইল মুছে যাবে
   DELETE_ZIP_AFTER: "true"
   # এর চেয়ে বড় (MB) নতুন/পরিবর্তিত ফাইল স্বয়ংক্রিয়ভাবে Git LFS-এ যাবে
   LFS_THRESHOLD_MB: "25"
@@ -49,12 +53,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          lfs: true   # রিপোতে LFS-এ থাকা জিপ থাকলেও যেন আসল ফাইল পাওয়া যায়
+          lfs: true
+          # PAT থাকলে .github/workflows/ এ push করা যাবে এবং push-এর পর অন্য workflow (deploy) চলবে
+          token: ${{ secrets.WORKFLOW_PAT || github.token }}
 
       - name: Download (if URL given) & extract zip files
         shell: bash
         env:
-          # input সরাসরি script-এ না বসিয়ে env দিয়ে পাঠানো হচ্ছে (injection এড়াতে)
           ZIP_URLS: ${{ github.event_name == 'workflow_dispatch' && inputs.zip_url || '' }}
           INPUT_DEST: ${{ github.event_name == 'workflow_dispatch' && inputs.dest_dir || '.' }}
         run: |
@@ -70,17 +75,12 @@ jobs:
             TMP="$(mktemp -d)"
             mkdir -p "$DEST"
 
-            # extract (non-ASCII নামের জন্য UTF-8 চেষ্টা, না হলে ডিফল্ট)
             unzip -o -q -O UTF-8 "$Z" -d "$TMP" 2>/dev/null || unzip -o -q "$Z" -d "$TMP"
 
-            # অপ্রয়োজনীয় ফাইল মুছে ফেলা
+            # অপ্রয়োজনীয় ফাইল মুছে ফেলা (.github এখন আর মোছা হয় না)
             rm -rf "$TMP/__MACOSX"
             find "$TMP" -name '.DS_Store' -delete
 
-            # জিপের ভেতরের যেকোনো লেভেলের .github ফোল্ডার বাদ
-            find "$TMP" -type d -name '.github' -prune -exec rm -rf {} +
-
-            # একটাই root ফোল্ডার থাকলে strip করার অপশন
             SRC="$TMP"
             if [ "$STRIP_SINGLE_ROOT" = "true" ]; then
               COUNT=$(find "$TMP" -mindepth 1 -maxdepth 1 | wc -l)
@@ -89,14 +89,12 @@ jobs:
               fi
             fi
 
-            # structure ঠিক রেখে কপি (একই নামের ফাইল ওভাররাইট হবে)
             rsync -a "$SRC"/ "$DEST"/
             rm -rf "$TMP"
           }
 
           # ---------- মোড ১: Direct download লিংক ----------
           if [ -n "${ZIP_URLS// /}" ]; then
-            # dest_dir যাচাই: absolute path বা .. অনুমোদিত নয়
             case "$INPUT_DEST" in
               /*|*..*) echo "::error::dest_dir অবশ্যই রিপোর ভেতরের relative path হতে হবে (/ বা .. চলবে না)"; exit 1 ;;
             esac
@@ -114,9 +112,8 @@ jobs:
               curl -fL --retry 3 --retry-delay 5 --connect-timeout 30 \
                    --progress-bar -o "$F" "$URL"
 
-              # সত্যিই জিপ কিনা যাচাই (অনেক সময় লিংক HTML পেজ ফেরত দেয়)
               if ! unzip -tq "$F" >/dev/null 2>&1; then
-                echo "::error::#$N লিংক থেকে নামানো ফাইলটি বৈধ zip নয়। এটা direct download লিংক কিনা দেখুন (Google Drive/Dropbox হলে direct রূপ ব্যবহার করুন)"
+                echo "::error::#$N লিংক থেকে নামানো ফাইলটি বৈধ zip নয়। এটা direct download লিংক কিনা দেখুন"
                 exit 1
               fi
 
@@ -155,7 +152,6 @@ jobs:
           LIMIT=$(( LFS_THRESHOLD_MB * 1024 * 1024 ))
           COUNT=0
 
-          # শুধু নতুন বা পরিবর্তিত ফাইল দেখা হবে (আগের commit করা ফাইলে হাত পড়বে না)
           while IFS= read -r -d '' F; do
             [ -f "$F" ] || continue
             case "$F" in .git/*|.github/*) continue ;; esac
@@ -177,12 +173,13 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add -A   # .gitattributes (LFS rules) সহ
+          git add -A
           if git diff --cached --quiet; then
             echo "কোনো পরিবর্তন নেই।"
             exit 0
           fi
 
-          git commit -m "Auto-unzip: extracted zip file(s) [skip ci]"
+          # [skip ci] সরানো হয়েছে, যাতে PAT দিয়ে push করলে deploy workflow নিজে চলে
+          git commit -m "Auto-unzip: extracted zip file(s)"
           git pull --rebase origin "${GITHUB_REF_NAME}"
           git push origin "HEAD:${GITHUB_REF_NAME}"
