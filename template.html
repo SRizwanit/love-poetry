@@ -8,39 +8,87 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla:ital@0;1&family=Hind+Siliguri:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+/* পেজ আঁকার আগেই সেভ করা থিম ও লেখার সাইজ বসানো, যাতে ঝলক না দেয় */
+(function(){try{var ns="kobita:"+location.pathname+":",
+ t=JSON.parse(localStorage.getItem(ns+"theme")),f=JSON.parse(localStorage.getItem(ns+"fs"));
+ if(t)document.documentElement.dataset.theme=t;
+ if(f!=null)document.documentElement.style.setProperty("--fs",[.85,1,1.15,1.3,1.5][f]||1)}catch(e){}})();
+</script>
 <style>
-:root{--wine:#2b0f20;--wine2:#4a1631;--rose:#e04a76;--rose-d:#b82d58;--paper:#fff0ee;--ink:#3b1226;--soft:#8a5a6c;--line:#f2c9d3}
+:root{--wine:#2b0f20;--wine2:#4a1631;--rose:#e04a76;--rose-d:#b82d58;--rose-h:#b82d58;--paper:#fff0ee;--ink:#3b1226;--soft:#8a5a6c;--line:#f2c9d3;
+ --pg1:#4a1631;--pg2:#2b0f20;--head:#ffe3e9;--head2:#e9a9bb;--foot:#c98aa0;--shadow:#000a;--hover:#ffd9e1;--pickbg:#fff;--focus:#2b0f20;
+ --tbbg:#2b0f20d9;--chip-bg:#ffffff14;--chip-fg:#ffd9e1;
+ --fs:1;--lh:calc(2.05rem*var(--fs))}
+/* হালকা থিম */
+:root[data-theme=light]{--pg1:#fff6f4;--pg2:#ffdce4;--head:#4a1631;--head2:#8a5a6c;--foot:#8a5a6c;--paper:#fffaf8;--line:#f5d6de;
+ --shadow:#6b2b4540;--focus:#4a1631;--tbbg:#fff4f2e6;--chip-bg:#ffffffcc;--chip-fg:#b82d58}
+/* গাঢ় থিম (রাতে পড়ার জন্য) */
+:root[data-theme=dark]{--pg1:#1c0c15;--pg2:#0d050a;--head:#f3d5dd;--head2:#b98699;--foot:#8f6577;--paper:#2a1220;--ink:#f6dfe5;--soft:#c49aab;
+ --line:#3d1b2e;--rose-d:#ff8fae;--rose-h:#c23661;--hover:#4a1631;--pickbg:#3d1b2e;--focus:#ffd9e1;--tbbg:#0d050ae6;--chip-bg:#ffffff10;--chip-fg:#ffd9e1}
 *{box-sizing:border-box;margin:0}
 html{scroll-behavior:smooth}
 body{font-family:"Hind Siliguri",system-ui,sans-serif;color:var(--ink);min-height:100vh;
- background:radial-gradient(120% 60% at 50% 0,var(--wine2),var(--wine) 70%) fixed;
+ background:radial-gradient(120% 60% at 50% 0,var(--pg1),var(--pg2) 70%) fixed;
  padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
-header{text-align:center;padding:64px 20px 36px;color:#ffe3e9}
+header{text-align:center;padding:64px 20px 30px;color:var(--head)}
 header h1{font-family:"Tiro Bangla",serif;font-weight:400;font-size:clamp(2.4rem,9vw,4.2rem);line-height:1.15;
  letter-spacing:.01em;animation:rise 1.2s ease both}
-header p{margin-top:12px;color:#e9a9bb;font-size:1.05rem}
+header p{margin-top:12px;color:var(--head2);font-size:1.05rem}
 .heart{display:inline-block;color:var(--rose);animation:beat 1.6s ease-in-out infinite}
+.heart svg{width:.62em;height:.62em;fill:currentColor;stroke:none;vertical-align:.02em}
+footer .heart svg{width:.95em;height:.95em;vertical-align:-.12em}
+
+/* ভেক্টর আইকন */
+.ic{width:1.15em;height:1.15em;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ic.fill{fill:currentColor}
+
+/* খোঁজা, প্রিয়, থিম, লেখার সাইজ */
+.tools{position:sticky;top:0;z-index:4;max-width:620px;margin:0 auto 22px;padding:10px 16px;
+ display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--tbbg);
+ -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-radius:0 0 18px 18px}
+.tools input{flex:1 1 190px;min-width:0;font:inherit;font-size:.95rem;padding:8px 16px;border-radius:99px;
+ border:1.5px solid var(--rose);background:var(--chip-bg);color:var(--head);outline:none}
+.tools input::placeholder{color:var(--head2)}
+.tools input:focus-visible{outline:3px solid var(--rose);outline-offset:1px}
+.chip{display:inline-flex;align-items:center;justify-content:center;gap:.4em;
+ font:inherit;font-size:.9rem;font-weight:500;cursor:pointer;border-radius:99px;padding:7px 14px;
+ border:1.5px solid var(--rose);background:var(--chip-bg);color:var(--chip-fg);transition:background .2s,color .2s}
+.chip:hover{background:var(--rose);color:#fff}
+.chip.on{background:var(--rose);color:#fff}
+.chip:disabled{opacity:.4;cursor:default;background:var(--chip-bg);color:var(--chip-fg)}
+.chip:focus-visible{outline:3px solid var(--rose);outline-offset:2px}
+.found{flex-basis:100%;font-size:.85rem;color:var(--head2);padding-left:6px}
+
 main{max-width:620px;margin:0 auto;padding:0 16px 110px;display:grid;gap:22px}
+.empty{text-align:center;color:var(--head2);padding:34px 10px}
 .card{position:relative;background:var(--paper);border-radius:6px 22px 6px 22px;padding:34px 26px 18px 30px;
- box-shadow:0 18px 40px -18px #000a;border-left:5px solid var(--rose);
- background-image:repeating-linear-gradient(transparent 0 2.05rem,var(--line) 2.05rem calc(2.05rem + 1px));
+ box-shadow:0 18px 40px -18px var(--shadow);border-left:5px solid var(--rose);
+ background-image:repeating-linear-gradient(transparent 0 var(--lh),var(--line) var(--lh) calc(var(--lh) + 1px));
  background-position:0 2.2rem}
+.card[hidden]{display:none}
 .no{position:absolute;top:-12px;right:18px;background:var(--rose);color:#fff;font-size:.85rem;
  padding:2px 12px;border-radius:99px;box-shadow:0 4px 10px -4px #0007}
-.poem{font-family:"Tiro Bangla",serif;font-size:clamp(1.2rem,4.6vw,1.45rem);line-height:2.05rem;color:var(--ink)}
+.poem{font-family:"Tiro Bangla",serif;font-size:calc(clamp(1.2rem,4.6vw,1.45rem)*var(--fs));line-height:var(--lh);color:var(--ink)}
 .poem span{display:block}
 .acts{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
-.btn{font:inherit;font-size:.95rem;font-weight:500;cursor:pointer;border-radius:99px;padding:9px 18px;
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4em;
+ font:inherit;font-size:.95rem;font-weight:500;cursor:pointer;border-radius:99px;padding:9px 18px;
  border:1.5px solid var(--rose);background:transparent;color:var(--rose-d);transition:background .2s,color .2s}
-.btn:hover{background:#ffd9e1}
+.btn:hover{background:var(--hover)}
 .btn.share{background:var(--rose);color:#fff}
-.btn.share:hover{background:var(--rose-d)}
-.btn:focus-visible{outline:3px solid var(--wine);outline-offset:2px}
+.btn.share:hover{background:var(--rose-h)}
+.btn.fav.on{background:var(--rose);color:#fff}
+.btn.fav.on:hover{background:var(--rose-h)}
+.btn:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 .btn.done{background:#1f7a4d;border-color:#1f7a4d;color:#fff}
-footer{text-align:center;color:#c98aa0;padding:0 20px 40px;font-size:.9rem}
+.btn.fail{background:#b3261e;border-color:#b3261e;color:#fff}
+.btn:disabled{opacity:.6;cursor:wait}
+footer{text-align:center;color:var(--foot);padding:0 20px 40px;font-size:.9rem}
 .petal{position:fixed;top:-8vh;pointer-events:none;color:var(--rose);opacity:.5;animation:fall linear infinite;z-index:0}
+.petal svg{width:100%;height:100%;fill:currentColor;stroke:none;display:block}
 header,main,footer{position:relative;z-index:1}
-.pick{position:absolute;top:-12px;left:18px;display:flex;align-items:center;gap:6px;background:#fff;color:var(--rose-d);
+.pick{position:absolute;top:-12px;left:18px;display:flex;align-items:center;gap:6px;background:var(--pickbg);color:var(--rose-d);
  font-size:.82rem;padding:2px 12px 2px 8px;border-radius:99px;cursor:pointer;box-shadow:0 4px 10px -4px #0007;user-select:none}
 .pick input{width:17px;height:17px;accent-color:var(--rose);cursor:pointer;margin:0}
 .card.sel{outline:3px solid var(--rose);outline-offset:3px}
@@ -58,79 +106,314 @@ header,main,footer{position:relative;z-index:1}
 </style>
 </head>
 <body>
+<!-- ভেক্টর আইকনের সংগ্রহ (একবার লেখা, সব জায়গায় ব্যবহার) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+ <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></symbol>
+ <symbol id="i-flower" viewBox="0 0 24 24"><g><ellipse cx="12" cy="6.8" rx="3.2" ry="4.6"/><ellipse cx="12" cy="6.8" rx="3.2" ry="4.6" transform="rotate(72 12 12)"/><ellipse cx="12" cy="6.8" rx="3.2" ry="4.6" transform="rotate(144 12 12)"/><ellipse cx="12" cy="6.8" rx="3.2" ry="4.6" transform="rotate(216 12 12)"/><ellipse cx="12" cy="6.8" rx="3.2" ry="4.6" transform="rotate(288 12 12)"/></g><circle cx="12" cy="12" r="1.8"/></symbol>
+ <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></symbol>
+ <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
+ <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-5-5L5 21"/></symbol>
+ <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+ <symbol id="i-send" viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></symbol>
+ <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></symbol>
+ <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
+ <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+ <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+</svg>
 <header>
-  <h1>%%TITLE%% <span class="heart">♥</span></h1>
+  <h1>%%TITLE%% <span class="heart"><svg aria-hidden="true"><use href="#i-heart"/></svg></span></h1>
   <p>%%COUNT%% টি কবিতা, শুধু তোমার জন্য</p>
 </header>
+<div class="tools" role="search">
+  <input id="q" type="search" placeholder="কবিতা খুঁজুন…" aria-label="কবিতা খুঁজুন" autocomplete="off" enterkeyhint="search">
+  <button class="chip" type="button" id="favOnly" aria-pressed="false"><svg class="ic fill" aria-hidden="true"><use href="#i-heart"/></svg>প্রিয় <span id="favN">০</span></button>
+  <button class="chip" type="button" id="theme" title="থিম বদলান"><svg class="ic" aria-hidden="true"><use href="#i-flower"/></svg>ক্লাসিক</button>
+  <button class="chip" type="button" id="fsDn" aria-label="লেখা ছোট করুন">অ<svg class="ic" aria-hidden="true"><use href="#i-minus"/></svg></button>
+  <button class="chip" type="button" id="fsUp" aria-label="লেখা বড় করুন">অ<svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg></button>
+  <span class="found" id="found" role="status" hidden></span>
+</div>
 <main>
 %%CARDS%%
+<p class="empty" id="empty" role="status" hidden></p>
 </main>
 <div class="bar" id="bar" role="region" aria-label="নির্বাচিত কবিতা">
   <span class="n"><span id="cnt">০</span> টি নির্বাচিত</span>
-  <button class="btn share" type="button" id="goAll">হোয়াটসঅ্যাপে শেয়ার</button>
+  <button class="btn share" type="button" id="goAll"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg>হোয়াটসঅ্যাপে একসাথে পাঠান</button>
+  <button class="btn" type="button" id="imgAll"><svg class="ic" aria-hidden="true"><use href="#i-image"/></svg>ছবি</button>
+  <button class="btn" type="button" id="copyAll"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg>সব কপি</button>
   <button class="btn" type="button" id="selAll">সব নির্বাচন</button>
   <button class="btn" type="button" id="clr">বাতিল</button>
 </div>
-<footer>ভালোবাসা দিয়ে লেখা <span class="heart">♥</span></footer>
+<footer>ভালোবাসা দিয়ে লেখা <span class="heart"><svg aria-hidden="true"><use href="#i-heart"/></svg></span></footer>
 <script>
 const WA="%%WA%%";
+const SEP="\n\n──────\n\n";           // নির্বাচিত কবিতাগুলোর মাঝের বিভাজক (ইচ্ছেমতো বদলানো যাবে)
+const MAX_URL=4000;                    // এর বেশি লম্বা হলে লিংকে না পাঠিয়ে কপি করা হবে
 const BN="০১২৩৪৫৬৭৮৯",bn=n=>String(n).replace(/\d/g,d=>BN[d]);
 const $=(q,r=document)=>r.querySelector(q),$$=(q,r=document)=>[...r.querySelectorAll(q)];
 const bar=$("#bar"),cnt=$("#cnt");
-let pending=[];                       // পপআপ ব্লক হলে বাকি কবিতা এখানে থাকে
+const ic=(n,cls="")=>'<svg class="ic '+cls+'" aria-hidden="true"><use href="#i-'+n+'"/></svg>';   // ভেক্টর আইকন
+const HEART=$("#i-heart path").getAttribute("d");                                              // ছবিতে আঁকার জন্য
 
-function flash(b,t){const o=b.textContent;b.textContent=t;b.classList.add("done");
- setTimeout(()=>{b.textContent=o;b.classList.remove("done")},1600)}
+/* ---------- সেভ করা তথ্য (localStorage) ---------- */
+const NS="kobita:"+location.pathname+":";
+const store={
+ get(k,d){try{const v=localStorage.getItem(NS+k);return v==null?d:JSON.parse(v)}catch{return d}},
+ set(k,v){try{localStorage.setItem(NS+k,JSON.stringify(v))}catch{}}
+};
+const hash=s=>{let h=5381;for(const ch of s)h=((h<<5)+h+ch.codePointAt(0))>>>0;return h.toString(36)};
+
+/* ---------- সাধারণ কাজ ---------- */
+function flash(b,t,bad){
+ const o=b.innerHTML,k=bad?"fail":"done";
+ b.innerHTML=ic(bad?"x":"check")+t;b.classList.add(k);
+ setTimeout(()=>{b.innerHTML=o;b.classList.remove(k)},1600);
+}
 const poemText=c=>$$(".poem span",c).map(s=>s.textContent).join("\n");
 const waUrl=t=>"https://wa.me/"+WA+"?text="+encodeURIComponent(t);   // শুধু কবিতা, কোনো লিংক নেই
+async function copyText(text){
+ try{await navigator.clipboard.writeText(text)}
+ catch{const t=document.createElement("textarea");t.value=text;document.body.appendChild(t);t.select();
+  document.execCommand("copy");t.remove()}
+}
+// একটি মেসেজ পাঠানো; অতি লম্বা হলে কপি করে খালি চ্যাট খোলে
+async function send(text){
+ const url=waUrl(text);
+ if(url.length>MAX_URL){
+  await copyText(text);
+  window.open("https://wa.me/"+WA,"_blank","noopener");
+  alert("লেখা অনেক বড় হওয়ায় কপি করা হয়েছে। হোয়াটসঅ্যাপে গিয়ে পেস্ট করে পাঠান।");
+ }else{
+  window.open(url,"_blank","noopener");
+ }
+}
+// বাটনে "তৈরি হচ্ছে…" দেখিয়ে কাজ চালানো, ডবল ক্লিক আটকানো
+async function busy(b,fn){
+ if(b.disabled)return;
+ const o=b.innerHTML;b.disabled=true;b.textContent="তৈরি হচ্ছে…";
+ let msg,bad=false;try{msg=await fn()}catch(e){console.error(e);msg="ব্যর্থ হয়েছে";bad=true}
+ b.innerHTML=o;b.disabled=false;if(msg)flash(b,msg,bad);
+}
 
-// প্রতিটি কার্ডে নির্বাচনের চেকবক্স
-$$(".card").forEach(c=>{
+/* ---------- কার্ড প্রস্তুত: চেকবক্স, আইকন, ♥ ও ছবি বাটন ---------- */
+const cards=$$(".card");
+// কার্ডের আগের বাটনে থাকা ইমোজি সরিয়ে ভেক্টর আইকন বসানো
+const clean=s=>s.replace(/[\p{Extended_Pictographic}\uFE0F✓✗♥♡❀]/gu,"").replace(/^[\s\u200d]+|[\s\u200d]+$/g,"");
+cards.forEach((c,i)=>{
+ c.dataset.text=poemText(c);
+ c.dataset.id=hash(c.dataset.text);
+ c.dataset.idx=i+1;
  const l=document.createElement("label");l.className="pick";
  l.innerHTML='<input type="checkbox" aria-label="নির্বাচন করুন"> নির্বাচন';
  c.appendChild(l);
+ let acts=$(".acts",c);
+ if(!acts){acts=document.createElement("div");acts.className="acts";c.appendChild(acts)}
+ $$(".btn.copy",c).forEach(b=>{b.innerHTML=ic("copy")+clean(b.textContent)});
+ $$(".btn.share",c).forEach(b=>{b.innerHTML=ic("send")+clean(b.textContent)});
+ const mk=(cls,html)=>{const b=document.createElement("button");b.type="button";b.className="btn "+cls;b.innerHTML=html;acts.appendChild(b)};
+ mk("fav","");
+ mk("img",ic("image")+"ছবি");
 });
-const picked=()=>$$(".card.sel");
+
+/* ---------- নির্বাচন (রিফ্রেশেও মনে থাকে) ---------- */
+const picked=()=>cards.filter(c=>c.classList.contains("sel"));   // কার্ডের ক্রম অনুযায়ী (১, ২, ৩ ...)
+const mergedText=()=>picked().map(poemText).join(SEP);
 function refresh(){
- const n=picked().length+pending.length;
+ const n=picked().length;
  cnt.textContent=bn(n);
  bar.classList.toggle("on",n>0);
- $("#goAll").textContent=pending.length?"বাকি "+bn(pending.length)+" টি খুলুন":"হোয়াটসঅ্যাপে শেয়ার";
+ $("#goAll").innerHTML=ic("send")+(n>1?"হোয়াটসঅ্যাপে "+bn(n)+" টি একসাথে পাঠান":"হোয়াটসঅ্যাপে পাঠান");
+ store.set("sel",picked().map(c=>c.dataset.id));
 }
-function openMany(texts){
- const left=[];
- texts.forEach(t=>{const w=window.open(waUrl(t),"_blank","noopener");if(!w)left.push(t)});
- pending=left;
- if(!left.length)$$(".card.sel").forEach(c=>{c.classList.remove("sel");$("input",c).checked=false});
- refresh();
- if(left.length)alert("ব্রাউজার কিছু ট্যাব আটকে দিয়েছে। এই সাইটের জন্য পপআপ অনুমতি দিন, তারপর “বাকি টি খুলুন” চাপুন।");
+function setSel(c,on){c.classList.toggle("sel",on);$("input",c).checked=on}
+function clearSel(){cards.forEach(c=>setSel(c,false));refresh()}
+{const saved=new Set(store.get("sel",[]));cards.forEach(c=>{if(saved.has(c.dataset.id))setSel(c,true)})}
+refresh();
+
+/* ---------- প্রিয় কবিতা ও খোঁজা ---------- */
+const favs=new Set(store.get("fav",[]));
+let query="",onlyFav=false;
+const norm=s=>s.normalize("NFC").replace(/[\u200c\u200d]/g,"").toLowerCase().trim();
+function paintFav(c){
+ const on=favs.has(c.dataset.id),b=$(".btn.fav",c);
+ b.classList.toggle("on",on);b.innerHTML=ic("heart",on?"fill":"")+"প্রিয়";b.setAttribute("aria-pressed",on);
+}
+function applyFilter(){
+ const nq=norm(query);let shown=0;
+ cards.forEach(c=>{
+  const ok=(!nq||norm(c.dataset.text).includes(nq))&&(!onlyFav||favs.has(c.dataset.id));
+  c.hidden=!ok;if(ok)shown++;
+ });
+ $("#favN").textContent=bn(favs.size);
+ const active=!!nq||onlyFav,found=$("#found"),empty=$("#empty");
+ found.hidden=!active;found.textContent=bn(shown)+" টি কবিতা পাওয়া গেছে";
+ empty.hidden=shown>0;
+ empty.textContent=(onlyFav&&!favs.size&&!nq)?"এখনো কোনো প্রিয় কবিতা নেই। কার্ডের “প্রিয়” বাটন চাপলে এখানে জমা হবে।":"কোনো কবিতা পাওয়া যায়নি।";
+}
+cards.forEach(paintFav);
+applyFilter();
+$("#q").addEventListener("input",e=>{query=e.target.value;applyFilter()});
+
+/* ---------- থিম ও লেখার সাইজ ---------- */
+const THEMES=[["classic","flower","ক্লাসিক","#2b0f20"],["light","sun","হালকা","#ffdce4"],["dark","moon","গাঢ়","#0d050a"]];
+const FS=[.85,1,1.15,1.3,1.5];
+let th=Math.max(0,THEMES.findIndex(t=>t[0]===store.get("theme","classic")));
+let fi=store.get("fs",1);if(!(fi>=0&&fi<FS.length))fi=1;
+function applyView(){
+ const root=document.documentElement;
+ root.dataset.theme=THEMES[th][0];
+ root.style.setProperty("--fs",FS[fi]);
+ $("#theme").innerHTML=ic(THEMES[th][1])+THEMES[th][2];
+ $("#fsDn").disabled=fi===0;$("#fsUp").disabled=fi===FS.length-1;
+ $('meta[name="theme-color"]').content=THEMES[th][3];
+}
+applyView();
+
+/* ---------- কবিতার ছবি (ক্যানভাসে আঁকা, বাইরের লাইব্রেরি লাগে না) ---------- */
+function wrapLine(t,g,w){
+ if(g.measureText(t).width<=w)return[t];
+ const out=[];let cur="";
+ for(const word of t.split(" ")){
+  const test=cur?cur+" "+word:word;
+  if(!cur||g.measureText(test).width<=w)cur=test;else{out.push(cur);cur=word}
+ }
+ if(cur)out.push(cur);return out;
+}
+const rr=(g,l,t,w,h,[a,b,c,d])=>{g.beginPath();g.moveTo(l+a,t);g.lineTo(l+w-b,t);g.arcTo(l+w,t,l+w,t+b,b);
+ g.lineTo(l+w,t+h-c);g.arcTo(l+w,t+h,l+w-c,t+h,c);g.lineTo(l+d,t+h);g.arcTo(l,t+h,l,t+h-d,d);
+ g.lineTo(l,t+a);g.arcTo(l,t,l+a,t,a);g.closePath()};
+// ভেক্টর হৃদয় আঁকা (ফন্টের চিহ্ন নয়, তাই সব ডিভাইসে একই দেখায়)
+function drawHeart(g,heart,x,y,size){
+ g.save();g.translate(x,y);g.scale(size/24,size/24);g.fill(heart);g.restore();
+}
+async function poemImage(card){
+ const lines=$$(".poem span",card).map(s=>s.textContent);
+ const no=(($(".no",card)||{}).textContent||"").trim();
+ const h1=$("header h1");
+ const title=((h1&&h1.childNodes[0]&&h1.childNodes[0].textContent)||document.title).trim();
+ const FAM='"Tiro Bangla",serif',FAM2='"Hind Siliguri",sans-serif';
+ const load=(f,t)=>document.fonts?document.fonts.load(f,t).catch(()=>{}):0;
+ await Promise.all([load('40px "Tiro Bangla"',lines.join(" ")+title),load('600 28px "Hind Siliguri"',no||"১")]);
+ const heart=new Path2D(HEART);
+
+ const W=1080,M=70,CW=W-M*2,TX=64,TW=CW-TX-56;
+ const c=document.createElement("canvas"),g=c.getContext("2d");
+ // লেখা কত লাইনে ভাঙবে ঠিক করা (বড় থেকে ছোট ফন্ট সাইজ চেষ্টা)
+ let fs=46,rows;
+ for(;;fs-=2){
+  g.font=fs+"px "+FAM;rows=[];
+  lines.forEach(t=>{if(!t.trim())rows.push(null);else wrapLine(t,g,TW).forEach(r=>rows.push(r))});
+  while(rows.length&&rows[0]===null)rows.shift();
+  while(rows.length&&rows[rows.length-1]===null)rows.pop();
+  if(rows.filter(Boolean).length<=20||fs<=30)break;
+ }
+ const lh=Math.round(fs*1.8),gap=Math.round(lh*.5);
+ const bodyH=rows.reduce((s,r)=>s+(r===null?gap:lh),0);
+ const cardH=110+bodyH+64,needH=M+cardH+150,H=Math.max(W,needH),cardT=M+(H-needH)/2;
+ c.width=W;c.height=H;                       // মাপ বদলালে ক্যানভাসের অবস্থা রিসেট হয়
+
+ const bg=g.createRadialGradient(W/2,0,0,W/2,0,H*.95);
+ bg.addColorStop(0,"#4a1631");bg.addColorStop(.7,"#2b0f20");bg.addColorStop(1,"#2b0f20");
+ g.fillStyle=bg;g.fillRect(0,0,W,H);
+ // ঝরা হৃদয় (কার্ড অনুযায়ী একই বিন্যাস)
+ let s=parseInt(card.dataset.id,36)||7;const rnd=()=>(s=(s*1664525+1013904223)>>>0)/4294967296;
+ g.fillStyle="#e04a76";g.globalAlpha=.22;
+ for(let i=0;i<16;i++){const sz=18+rnd()*34;drawHeart(g,heart,rnd()*W,rnd()*H,sz)}
+ g.globalAlpha=1;
+ // কাগজের কার্ড
+ const R=[10,40,10,40];
+ g.save();g.shadowColor="rgba(0,0,0,.5)";g.shadowBlur=60;g.shadowOffsetY=26;
+ rr(g,M,cardT,CW,cardH,R);g.fillStyle="#fff0ee";g.fill();g.restore();
+ g.save();rr(g,M,cardT,CW,cardH,R);g.clip();
+ g.fillStyle="#e04a76";g.fillRect(M,cardT,10,cardH);
+ g.font=fs+"px "+FAM;g.fillStyle="#3b1226";g.strokeStyle="#f2c9d3";g.lineWidth=2;g.textAlign="left";
+ let y=cardT+110;
+ rows.forEach(r=>{
+  if(r===null){y+=gap;return}
+  g.fillText(r,M+TX,y+lh*.68);
+  g.beginPath();g.moveTo(M+10,y+lh);g.lineTo(M+CW,y+lh);g.stroke();
+  y+=lh;
+ });
+ g.restore();
+ // নম্বরের ব্যাজ
+ if(no){
+  g.font="600 28px "+FAM2;
+  const bw=g.measureText(no).width+48,bh=48,bx=M+CW-34-bw,by=cardT-22;
+  rr(g,bx,by,bw,bh,[24,24,24,24]);g.fillStyle="#e04a76";g.fill();
+  g.fillStyle="#fff";g.textAlign="center";g.fillText(no,bx+bw/2,by+33);g.textAlign="left";
+ }
+ // নিচে ভেক্টর হৃদয় ও শিরোনাম
+ g.font="34px "+FAM;
+ const hs=34,hg=16,tw=g.measureText(title).width,x0=(W-(hs+hg+tw))/2,base=cardT+cardH+88;
+ g.fillStyle="#e04a76";drawHeart(g,heart,x0,base-hs+4,hs);
+ g.fillStyle="#e9a9bb";g.textAlign="left";g.fillText(title,x0+hs+hg,base);
+
+ const blob=await new Promise(r=>c.toBlob(r,"image/png"));
+ return new File([blob],"kobita-"+card.dataset.idx+".png",{type:"image/png"});
+}
+function download(f){
+ const u=URL.createObjectURL(f),a=document.createElement("a");
+ a.href=u;a.download=f.name;document.body.appendChild(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(u),4000);
+}
+// মোবাইলে শেয়ার শিট, ডেস্কটপে সরাসরি ডাউনলোড
+async function deliver(files){
+ if(matchMedia("(pointer:coarse)").matches&&navigator.canShare&&navigator.canShare({files})){
+  try{await navigator.share({files});return "হয়েছে"}
+  catch(e){if(e&&e.name==="AbortError")return ""}
+ }
+ files.forEach((f,i)=>setTimeout(()=>download(f),i*450));
+ return "সেভ হয়েছে";
 }
 
+/* ---------- ইভেন্ট ---------- */
 document.addEventListener("change",e=>{
  const i=e.target.closest(".pick input");if(!i)return;
  i.closest(".card").classList.toggle("sel",i.checked);refresh();
 });
 document.addEventListener("click",async e=>{
+ const ch=e.target.closest(".chip");
+ if(ch){
+  if(ch.id==="favOnly"){onlyFav=!onlyFav;ch.classList.toggle("on",onlyFav);ch.setAttribute("aria-pressed",onlyFav);applyFilter()}
+  else if(ch.id==="theme"){th=(th+1)%THEMES.length;store.set("theme",THEMES[th][0]);applyView()}
+  else if(ch.id==="fsDn"&&fi>0){fi--;store.set("fs",fi);applyView()}
+  else if(ch.id==="fsUp"&&fi<FS.length-1){fi++;store.set("fs",fi);applyView()}
+  return;
+ }
  const b=e.target.closest(".btn");if(!b)return;
  if(b.id==="goAll"){
-  openMany(pending.length?pending:picked().map(poemText));return}
- if(b.id==="selAll"){$$(".card").forEach(c=>{c.classList.add("sel");$("input",c).checked=true});refresh();return}
- if(b.id==="clr"){pending=[];$$(".card").forEach(c=>{c.classList.remove("sel");$("input",c).checked=false});refresh();return}
+  if(!picked().length)return;
+  await send(mergedText());clearSel();return}
+ if(b.id==="imgAll"){
+  if(!picked().length)return;
+  busy(b,async()=>{const fl=[];for(const c of picked())fl.push(await poemImage(c));return deliver(fl)});return}
+ if(b.id==="copyAll"){
+  if(!picked().length)return;
+  await copyText(mergedText());flash(b,"কপি হয়েছে");return}
+ if(b.id==="selAll"){cards.filter(c=>!c.hidden).forEach(c=>setSel(c,true));refresh();return}   // শুধু যেগুলো দেখা যাচ্ছে
+ if(b.id==="clr"){clearSel();return}
  const card=b.closest(".card");if(!card)return;
+ if(b.classList.contains("fav")){
+  const id=card.dataset.id;
+  favs.has(id)?favs.delete(id):favs.add(id);
+  store.set("fav",[...favs]);
+  cards.forEach(paintFav);applyFilter();return}
+ if(b.classList.contains("img")){
+  busy(b,async()=>deliver([await poemImage(card)]));return}
  const text=poemText(card);
  if(b.classList.contains("copy")){
-  try{await navigator.clipboard.writeText(text)}
-  catch{const t=document.createElement("textarea");t.value=text;document.body.appendChild(t);t.select();
-   document.execCommand("copy");t.remove()}
-  flash(b,"কপি হয়েছে ✓");
+  await copyText(text);flash(b,"কপি হয়েছে");
  }else{
-  window.open(waUrl(text),"_blank","noopener");
+  send(text);
  }
 });
-// ঝরা গোলাপ-পাপড়ি
+
+// ঝরা গোলাপ-পাপড়ি (ভেক্টর ফুল ও হৃদয়)
 if(!matchMedia("(prefers-reduced-motion:reduce)").matches){
- for(let i=0;i<14;i++){const p=document.createElement("span");p.className="petal";p.textContent=i%3?"❀":"♥";
-  p.style.left=Math.random()*100+"vw";p.style.fontSize=10+Math.random()*14+"px";
+ for(let i=0;i<14;i++){const p=document.createElement("span");p.className="petal";
+  p.innerHTML='<svg aria-hidden="true"><use href="#i-'+(i%3?"flower":"heart")+'"/></svg>';
+  const z=10+Math.random()*14;p.style.width=p.style.height=z+"px";
+  p.style.left=Math.random()*100+"vw";
   p.style.animationDuration=12+Math.random()*14+"s";p.style.animationDelay=-Math.random()*20+"s";
   document.body.appendChild(p)}
 }
