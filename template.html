@@ -24,6 +24,7 @@
 :root[data-theme=dark]{--pg1:#1c0c15;--pg2:#0d050a;--head:#f3d5dd;--head2:#b98699;--foot:#8f6577;--paper:#2a1220;--ink:#f6dfe5;--soft:#c49aab;
  --line:#3d1b2e;--rose-d:#ff8fae;--rose-h:#c23661;--hover:#4a1631;--pickbg:#3d1b2e;--focus:#ffd9e1;--tbbg:#0d050ae6;--chip-bg:#ffffff10;--chip-fg:#ffd9e1}
 *{box-sizing:border-box;margin:0}
+[hidden]{display:none!important}
 html{scroll-behavior:smooth}
 body{font-family:"Hind Siliguri",system-ui,sans-serif;color:var(--ink);min-height:100vh;
  background:radial-gradient(120% 60% at 50% 0,var(--pg1),var(--pg2) 70%) fixed;
@@ -39,38 +40,42 @@ footer .heart svg{width:.95em;height:.95em;vertical-align:-.12em}
 /* ভেক্টর আইকন */
 .ic{width:1.15em;height:1.15em;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .ic.fill{fill:currentColor}
+.ic.spin{animation:spin 1s linear infinite}
+.ic.big{width:2.6rem;height:2.6rem;opacity:.6}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}   /* শুধু স্ক্রিন রিডারের জন্য */
 
 /* খোঁজা, প্রিয়, থিম */
 .tools{position:sticky;top:0;z-index:4;max-width:620px;margin:0 auto 22px;padding:10px 16px;
  display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--tbbg);
  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-radius:0 0 18px 18px}
-.tools input{flex:1 1 190px;min-width:0;font:inherit;font-size:.95rem;padding:8px 16px;border-radius:99px;
- border:1.5px solid var(--rose);background:var(--chip-bg);color:var(--head);outline:none}
-.tools input::placeholder{color:var(--head2)}
-.tools input:focus-visible{outline:3px solid var(--rose);outline-offset:1px}
+.search{flex:1 1 190px;display:flex;align-items:center;gap:.5em;padding:0 14px;border-radius:99px;
+ border:1.5px solid var(--rose);background:var(--chip-bg);color:var(--head2)}
+.search:focus-within{outline:3px solid var(--rose);outline-offset:1px}
+.search input{flex:1;min-width:0;font:inherit;font-size:.95rem;padding:8px 0;border:0;background:transparent;color:var(--head);outline:none}
 .chip{display:inline-flex;align-items:center;justify-content:center;gap:.4em;
- font:inherit;font-size:.9rem;font-weight:500;cursor:pointer;border-radius:99px;padding:7px 14px;
+ font:inherit;font-size:.9rem;font-weight:500;cursor:pointer;border-radius:99px;padding:7px 13px;
  border:1.5px solid var(--rose);background:var(--chip-bg);color:var(--chip-fg);transition:background .2s,color .2s}
+.chip .ic{width:1.25rem;height:1.25rem}
 .chip:hover{background:var(--rose);color:#fff}
 .chip.on{background:var(--rose);color:#fff}
 .chip:focus-visible{outline:3px solid var(--rose);outline-offset:2px}
-.found{flex-basis:100%;font-size:.85rem;color:var(--head2);padding-left:6px}
+.found{flex-basis:100%;display:flex;align-items:center;gap:.4em;font-size:.85rem;color:var(--head2);padding-left:6px}
 
 main{max-width:620px;margin:0 auto;padding:0 16px 110px;display:grid;gap:22px}
-.empty{text-align:center;color:var(--head2);padding:34px 10px}
+.empty{display:flex;justify-content:center;color:var(--head2);padding:34px 10px}
 .card{position:relative;background:var(--paper);border-radius:6px 22px 6px 22px;padding:34px 26px 18px 30px;
  box-shadow:0 18px 40px -18px var(--shadow);border-left:5px solid var(--rose);
  background-image:repeating-linear-gradient(transparent 0 2.05rem,var(--line) 2.05rem calc(2.05rem + 1px));
  background-position:0 2.2rem}
-.card[hidden]{display:none}
 .no{position:absolute;top:-12px;right:18px;background:var(--rose);color:#fff;font-size:.85rem;
  padding:2px 12px;border-radius:99px;box-shadow:0 4px 10px -4px #0007}
 .poem{font-family:"Tiro Bangla",serif;font-size:clamp(1.2rem,4.6vw,1.45rem);line-height:2.05rem;color:var(--ink)}
 .poem span{display:block}
-.acts{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4em;
- font:inherit;font-size:.95rem;font-weight:500;cursor:pointer;border-radius:99px;padding:9px 18px;
- border:1.5px solid var(--rose);background:transparent;color:var(--rose-d);transition:background .2s,color .2s}
+.acts{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap}
+/* শুধু আইকনের গোল বাটন */
+.btn{display:inline-flex;align-items:center;justify-content:center;width:2.75rem;height:2.75rem;padding:0;border-radius:50%;
+ font:inherit;cursor:pointer;border:1.5px solid var(--rose);background:transparent;color:var(--rose-d);transition:background .2s,color .2s}
+.btn .ic{width:1.3rem;height:1.3rem}
 .btn:hover{background:var(--hover)}
 .btn.share{background:var(--rose);color:#fff}
 .btn.share:hover{background:var(--rose-h)}
@@ -79,26 +84,28 @@ main{max-width:620px;margin:0 auto;padding:0 16px 110px;display:grid;gap:22px}
 .btn:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 .btn.done{background:#1f7a4d;border-color:#1f7a4d;color:#fff}
 .btn.fail{background:#b3261e;border-color:#b3261e;color:#fff}
-.btn:disabled{opacity:.6;cursor:wait}
+.btn:disabled{opacity:.7;cursor:wait}
 footer{text-align:center;color:var(--foot);padding:0 20px 40px;font-size:.9rem}
 .petal{position:fixed;top:-8vh;pointer-events:none;color:var(--rose);opacity:.5;animation:fall linear infinite;z-index:0}
 .petal svg{width:100%;height:100%;fill:currentColor;stroke:none;display:block}
 header,main,footer{position:relative;z-index:1}
-.pick{position:absolute;top:-12px;left:18px;display:flex;align-items:center;gap:6px;background:var(--pickbg);color:var(--rose-d);
- font-size:.82rem;padding:2px 12px 2px 8px;border-radius:99px;cursor:pointer;box-shadow:0 4px 10px -4px #0007;user-select:none}
-.pick input{width:17px;height:17px;accent-color:var(--rose);cursor:pointer;margin:0}
+.pick{position:absolute;top:-12px;left:18px;display:flex;align-items:center;background:var(--pickbg);color:var(--rose-d);
+ padding:5px 7px;border-radius:99px;cursor:pointer;box-shadow:0 4px 10px -4px #0007;user-select:none}
+.pick input{width:18px;height:18px;accent-color:var(--rose);cursor:pointer;margin:0}
 .card.sel{outline:3px solid var(--rose);outline-offset:3px}
 .bar{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translate(-50%,160%);z-index:5;
  display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;width:max-content;max-width:calc(100vw - 24px);
  background:var(--paper);padding:10px 14px;border-radius:22px;box-shadow:0 14px 40px -10px #000c;transition:transform .25s}
 .bar.on{transform:translate(-50%,0)}
-.bar .n{font-weight:600;color:var(--ink)}
-.bar .btn{padding:7px 14px;font-size:.9rem}
+.bar .n{display:inline-flex;align-items:center;gap:.35em;font-weight:600;color:var(--ink);padding-right:4px}
+.bar .btn{width:2.5rem;height:2.5rem}
+.bar .btn .ic{width:1.2rem;height:1.2rem}
 @keyframes fall{to{transform:translateY(115vh) rotate(360deg)}}
 @keyframes beat{50%{transform:scale(1.18)}}
 @keyframes rise{from{opacity:0;transform:translateY(14px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important}.petal{display:none}}
-@media(max-width:420px){.card{padding:32px 18px 16px 22px}.btn{flex:1;text-align:center}}
+@media(max-width:420px){.card{padding:32px 18px 16px 22px}}
 </style>
 </head>
 <body>
@@ -113,15 +120,18 @@ header,main,footer{position:relative;z-index:1}
  <symbol id="i-send" viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></symbol>
  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></symbol>
  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
+ <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></symbol>
+ <symbol id="i-spin" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.2-8.56"/></symbol>
+ <symbol id="i-selall" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 12.5l3 3 5-6"/></symbol>
 </svg>
 <header>
   <h1>%%TITLE%% <span class="heart"><svg aria-hidden="true"><use href="#i-heart"/></svg></span></h1>
   <p>%%COUNT%% টি কবিতা, শুধু তোমার জন্য</p>
 </header>
 <div class="tools" role="search">
-  <input id="q" type="search" placeholder="কবিতা খুঁজুন…" aria-label="কবিতা খুঁজুন" autocomplete="off" enterkeyhint="search">
-  <button class="chip" type="button" id="favOnly" aria-pressed="false"><svg class="ic fill" aria-hidden="true"><use href="#i-heart"/></svg>প্রিয় <span id="favN">০</span></button>
-  <button class="chip" type="button" id="theme" title="থিম বদলান"><svg class="ic" aria-hidden="true"><use href="#i-flower"/></svg>ক্লাসিক</button>
+  <label class="search"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg><input id="q" type="search" aria-label="কবিতা খুঁজুন" autocomplete="off" enterkeyhint="search"></label>
+  <button class="chip" type="button" id="favOnly" aria-pressed="false" title="প্রিয় কবিতা" aria-label="প্রিয় কবিতা"><svg class="ic fill" aria-hidden="true"><use href="#i-heart"/></svg><span id="favN">০</span></button>
+  <button class="chip" type="button" id="theme" title="থিম বদলান" aria-label="থিম বদলান"><svg class="ic" aria-hidden="true"><use href="#i-flower"/></svg></button>
   <span class="found" id="found" role="status" hidden></span>
 </div>
 <main>
@@ -129,12 +139,12 @@ header,main,footer{position:relative;z-index:1}
 <p class="empty" id="empty" role="status" hidden></p>
 </main>
 <div class="bar" id="bar" role="region" aria-label="নির্বাচিত কবিতা">
-  <span class="n"><span id="cnt">০</span> টি নির্বাচিত</span>
-  <button class="btn share" type="button" id="goAll"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg>হোয়াটসঅ্যাপে একসাথে পাঠান</button>
-  <button class="btn" type="button" id="imgAll"><svg class="ic" aria-hidden="true"><use href="#i-image"/></svg>ছবি</button>
-  <button class="btn" type="button" id="copyAll"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg>সব কপি</button>
-  <button class="btn" type="button" id="selAll">সব নির্বাচন</button>
-  <button class="btn" type="button" id="clr">বাতিল</button>
+  <span class="n" title="নির্বাচিত" aria-label="নির্বাচিত"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span id="cnt">০</span></span>
+  <button class="btn share" type="button" id="goAll" title="হোয়াটসঅ্যাপে পাঠান" aria-label="হোয়াটসঅ্যাপে পাঠান"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg></button>
+  <button class="btn" type="button" id="imgAll" title="ছবি" aria-label="ছবি"><svg class="ic" aria-hidden="true"><use href="#i-image"/></svg></button>
+  <button class="btn" type="button" id="copyAll" title="সব কপি" aria-label="সব কপি"><svg class="ic" aria-hidden="true"><use href="#i-copy"/></svg></button>
+  <button class="btn" type="button" id="selAll" title="সব নির্বাচন" aria-label="সব নির্বাচন"><svg class="ic" aria-hidden="true"><use href="#i-selall"/></svg></button>
+  <button class="btn" type="button" id="clr" title="বাতিল" aria-label="বাতিল"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
 </div>
 <footer>ভালোবাসা দিয়ে লেখা <span class="heart"><svg aria-hidden="true"><use href="#i-heart"/></svg></span></footer>
 <script>
@@ -156,9 +166,10 @@ const store={
 const hash=s=>{let h=5381;for(const ch of s)h=((h<<5)+h+ch.codePointAt(0))>>>0;return h.toString(36)};
 
 /* ---------- সাধারণ কাজ ---------- */
-function flash(b,t,bad){
+// সফল হলে টিক, ব্যর্থ হলে ক্রস আইকন কিছুক্ষণ দেখানো (কোনো লেখা নয়)
+function flash(b,bad){
  const o=b.innerHTML,k=bad?"fail":"done";
- b.innerHTML=ic(bad?"x":"check")+t;b.classList.add(k);
+ b.innerHTML=ic(bad?"x":"check");b.classList.add(k);
  setTimeout(()=>{b.innerHTML=o;b.classList.remove(k)},1600);
 }
 const poemText=c=>$$(".poem span",c).map(s=>s.textContent).join("\n");
@@ -179,32 +190,37 @@ async function send(text){
   window.open(url,"_blank","noopener");
  }
 }
-// বাটনে "তৈরি হচ্ছে…" দেখিয়ে কাজ চালানো, ডবল ক্লিক আটকানো
+// কাজ চলার সময় ঘূর্ণমান আইকন, ডবল ক্লিক আটকানো
 async function busy(b,fn){
  if(b.disabled)return;
- const o=b.innerHTML;b.disabled=true;b.textContent="তৈরি হচ্ছে…";
- let msg,bad=false;try{msg=await fn()}catch(e){console.error(e);msg="ব্যর্থ হয়েছে";bad=true}
- b.innerHTML=o;b.disabled=false;if(msg)flash(b,msg,bad);
+ const o=b.innerHTML;b.disabled=true;b.innerHTML=ic("spin","spin");
+ let ok,bad=false;try{ok=await fn()}catch(e){console.error(e);bad=true}
+ b.innerHTML=o;b.disabled=false;if(bad||ok)flash(b,bad);
 }
 
-/* ---------- কার্ড প্রস্তুত: চেকবক্স, আইকন, প্রিয় ও ছবি বাটন ---------- */
+/* ---------- কার্ড প্রস্তুত: চেকবক্স ও শুধু-আইকন বাটন ---------- */
 const cards=$$(".card");
-// কার্ডের আগের বাটনে থাকা ইমোজি সরিয়ে ভেক্টর আইকন বসানো
+// কার্ডের আগের বাটনের লেখা/ইমোজি সরিয়ে আইকন বসানো; লেখাটি শুধু টুলটিপ ও অ্যাক্সেসিবিলিটির জন্য থাকে
 const clean=s=>s.replace(/[\p{Extended_Pictographic}\uFE0F✓✗♥♡❀]/gu,"").replace(/^[\s\u200d]+|[\s\u200d]+$/g,"");
+function label(b,icon,fallback,cls){
+ const t=clean(b.textContent)||fallback;
+ b.innerHTML=ic(icon,cls||"");b.title=t;b.setAttribute("aria-label",t);
+}
 cards.forEach((c,i)=>{
  c.dataset.text=poemText(c);
  c.dataset.id=hash(c.dataset.text);
  c.dataset.idx=i+1;
- const l=document.createElement("label");l.className="pick";
- l.innerHTML='<input type="checkbox" aria-label="নির্বাচন করুন"> নির্বাচন';
+ const l=document.createElement("label");l.className="pick";l.title="নির্বাচন";
+ l.innerHTML='<input type="checkbox" aria-label="নির্বাচন করুন">';
  c.appendChild(l);
  let acts=$(".acts",c);
  if(!acts){acts=document.createElement("div");acts.className="acts";c.appendChild(acts)}
- $$(".btn.copy",c).forEach(b=>{b.innerHTML=ic("copy")+clean(b.textContent)});
- $$(".btn.share",c).forEach(b=>{b.innerHTML=ic("send")+clean(b.textContent)});
- const mk=(cls,html)=>{const b=document.createElement("button");b.type="button";b.className="btn "+cls;b.innerHTML=html;acts.appendChild(b)};
- mk("fav","");
- mk("img",ic("image")+"ছবি");
+ $$(".btn.copy",c).forEach(b=>label(b,"copy","কপি"));
+ $$(".btn.share",c).forEach(b=>label(b,"send","হোয়াটসঅ্যাপে পাঠান"));
+ const mk=(cls,icon,t)=>{const b=document.createElement("button");b.type="button";b.className="btn "+cls;
+  b.title=t;b.setAttribute("aria-label",t);b.innerHTML=ic(icon);acts.appendChild(b)};
+ mk("fav","heart","প্রিয়");
+ mk("img","image","ছবি");
 });
 
 /* ---------- নির্বাচন (রিফ্রেশেও মনে থাকে) ---------- */
@@ -214,7 +230,6 @@ function refresh(){
  const n=picked().length;
  cnt.textContent=bn(n);
  bar.classList.toggle("on",n>0);
- $("#goAll").innerHTML=ic("send")+(n>1?"হোয়াটসঅ্যাপে "+bn(n)+" টি একসাথে পাঠান":"হোয়াটসঅ্যাপে পাঠান");
  store.set("sel",picked().map(c=>c.dataset.id));
 }
 function setSel(c,on){c.classList.toggle("sel",on);$("input",c).checked=on}
@@ -228,7 +243,7 @@ let query="",onlyFav=false;
 const norm=s=>s.normalize("NFC").replace(/[\u200c\u200d]/g,"").toLowerCase().trim();
 function paintFav(c){
  const on=favs.has(c.dataset.id),b=$(".btn.fav",c);
- b.classList.toggle("on",on);b.innerHTML=ic("heart",on?"fill":"")+"প্রিয়";b.setAttribute("aria-pressed",on);
+ b.classList.toggle("on",on);b.innerHTML=ic("heart",on?"fill":"");b.setAttribute("aria-pressed",on);
 }
 function applyFilter(){
  const nq=norm(query);let shown=0;
@@ -238,9 +253,11 @@ function applyFilter(){
  });
  $("#favN").textContent=bn(favs.size);
  const active=!!nq||onlyFav,found=$("#found"),empty=$("#empty");
- found.hidden=!active;found.textContent=bn(shown)+" টি কবিতা পাওয়া গেছে";
+ found.hidden=!active;
+ found.innerHTML=ic("search")+bn(shown)+'<span class="sr"> টি কবিতা পাওয়া গেছে</span>';
  empty.hidden=shown>0;
- empty.textContent=(onlyFav&&!favs.size&&!nq)?"এখনো কোনো প্রিয় কবিতা নেই। কার্ডের “প্রিয়” বাটন চাপলে এখানে জমা হবে।":"কোনো কবিতা পাওয়া যায়নি।";
+ const noFav=onlyFav&&!favs.size&&!nq;
+ empty.innerHTML=ic(noFav?"heart":"search","big")+'<span class="sr">'+(noFav?"এখনো কোনো প্রিয় কবিতা নেই":"কোনো কবিতা পাওয়া যায়নি")+'</span>';
 }
 cards.forEach(paintFav);
 applyFilter();
@@ -251,7 +268,8 @@ const THEMES=[["classic","flower","ক্লাসিক","#2b0f20"],["light","s
 let th=Math.max(0,THEMES.findIndex(t=>t[0]===store.get("theme","classic")));
 function applyView(){
  document.documentElement.dataset.theme=THEMES[th][0];
- $("#theme").innerHTML=ic(THEMES[th][1])+THEMES[th][2];
+ const t=$("#theme");t.innerHTML=ic(THEMES[th][1]);
+ t.title=THEMES[th][2];t.setAttribute("aria-label","থিম: "+THEMES[th][2]);
  $('meta[name="theme-color"]').content=THEMES[th][3];
 }
 applyView();
@@ -369,20 +387,21 @@ function download(f){
 }
 /* wa.me শুধু লেখা নেয়, ছবি জোড়া যায় না। তাই:
    মোবাইলে শেয়ার শিট (সেখান থেকে হোয়াটসঅ্যাপ বেছে নিতে হয়),
-   কম্পিউটারে ছবি কপি করে হোয়াটসঅ্যাপ চ্যাট খোলা (পেস্ট করলেই ছবি আসে), না হলে ডাউনলোড */
+   কম্পিউটারে ছবি কপি করে হোয়াটসঅ্যাপ চ্যাট খোলা (পেস্ট করলেই ছবি আসে), না হলে ডাউনলোড।
+   সফল হলে true, ব্যবহারকারী বাতিল করলে false */
 async function deliver(file){
  if(matchMedia("(pointer:coarse)").matches&&navigator.canShare&&navigator.canShare({files:[file]})){
-  try{await navigator.share({files:[file]});return "হয়েছে"}
-  catch(e){if(e&&e.name==="AbortError")return ""}
+  try{await navigator.share({files:[file]});return true}
+  catch(e){if(e&&e.name==="AbortError")return false}
  }
  try{
   await navigator.clipboard.write([new ClipboardItem({"image/png":file})]);
   window.open("https://wa.me/"+WA,"_blank","noopener");
   alert("ছবি কপি হয়েছে। হোয়াটসঅ্যাপ চ্যাটে গিয়ে পেস্ট (Ctrl+V) করে পাঠান।");
-  return "কপি হয়েছে";
+  return true;
  }catch{}
  download(file);
- return "সেভ হয়েছে";
+ return true;
 }
 
 /* ---------- ইভেন্ট ---------- */
@@ -406,7 +425,7 @@ document.addEventListener("click",async e=>{
   busy(b,async()=>deliver(await poemImage(picked())));return}
  if(b.id==="copyAll"){
   if(!picked().length)return;
-  await copyText(mergedText());flash(b,"কপি হয়েছে");return}
+  await copyText(mergedText());flash(b);return}
  if(b.id==="selAll"){cards.filter(c=>!c.hidden).forEach(c=>setSel(c,true));refresh();return}   // শুধু যেগুলো দেখা যাচ্ছে
  if(b.id==="clr"){clearSel();return}
  const card=b.closest(".card");if(!card)return;
@@ -419,7 +438,7 @@ document.addEventListener("click",async e=>{
   busy(b,async()=>deliver(await poemImage([card])));return}
  const text=poemText(card);
  if(b.classList.contains("copy")){
-  await copyText(text);flash(b,"কপি হয়েছে");
+  await copyText(text);flash(b);
  }else{
   send(text);
  }
